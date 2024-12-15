@@ -4,9 +4,11 @@ import pino from 'pino-http';
 // import dotenv from 'dotenv';
 import { getEnvVar } from './utils/getEnvVar.js';
 // dotenv.config(); //читає текстовий файл з env і записує в налаштування комп.
+import * as contactsServices from "./services/contactsServices.js";
 
 export const startServer = () => {
   const app = express();
+
   //створюємо мідлвари:
   app.use(cors());
   app.use(express.json());
@@ -29,9 +31,32 @@ export const startServer = () => {
     });
   });
 
-  // app.get('/contacts', (req, res) => {
-  //   res.json(contacts);
-  // });
+  app.get('/contacts', async (req, res) => {
+    const data = await contactsServices.getContacts();
+    res.json({
+      status: 200,
+      messsage: "Successfully found movies",
+      data
+    });
+  });
+
+app.get("/contacts/:id", async (req, res)=>{
+  const {id} = req.params;
+  const data = await contactsServices.getContactById(id);
+
+  if (!data) {
+    return res.status(404).json({
+      status: 404,
+      message: `Movie with id=${id} not found`,
+    });
+  }
+
+  res.json({
+    status: 200,
+    message: `Successfully find movie with id=${id}`,
+    data,
+  });
+});
 
   app.use((req, res) => {
     res.status(404).json({
