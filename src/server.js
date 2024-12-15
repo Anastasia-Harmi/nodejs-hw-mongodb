@@ -6,7 +6,7 @@ import { getEnvVar } from './utils/getEnvVar.js';
 // dotenv.config(); //читає текстовий файл з env і записує в налаштування комп.
 import * as contactsServices from "./services/contactsServices.js";
 
-export const startServer = () => {
+export const setupServer = () => {
   const app = express();
 
   //створюємо мідлвари:

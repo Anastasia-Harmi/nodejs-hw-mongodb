@@ -19,8 +19,14 @@ contactType: {
     enum: ["work", "home", "personal"],
     required: true,
     default: "personal"
-}
-});
+},
+},
+
+{
+    timestamps: true,  // автоматичне додавання createdAt та updatedAt
+},
+);
+
 //Створюємо модель(це клас, тому з великої)
 const ContactCollection = model("contact", contactSchema); //аргументи: (назва колекції, схема)
 export default ContactCollection;
