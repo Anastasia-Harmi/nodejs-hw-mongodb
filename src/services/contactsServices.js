@@ -22,3 +22,6 @@ export const updateContact = async (_id, payload, options = {}) => {
     data: result.value, //повертаємо сам об'єкт
   };
 };
+
+export const deleteContact = (filter) =>
+  ContactCollection.findOneAndDelete(filter);

@@ -31,3 +31,8 @@ contactsRouter.patch(
   '/:id',
   ctrlWrapper(contactsController.patchContactController),
 );
+
+contactsRouter.delete(
+  '/:id',
+  ctrlWrapper(contactsController.deleteContactController),
+);
