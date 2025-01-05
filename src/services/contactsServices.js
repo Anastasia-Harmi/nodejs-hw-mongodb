@@ -13,6 +13,12 @@ export const updateContact = async (_id, payload, options = {}) => {
   const result = await ContactCollection.findOneAndUpdate({ _id }, payload, {
     new: true,
     upsert,
+    includeResultMetadata: true,
   });
-  return result;
+
+  const isNew = Boolean(result.lastErrorObject.upserted); // якщо є строка з id-true(новий об'єкт), нема - undefined(false)-оновлений об'єкт
+  return {
+    isNew, //повертаємо додали чи ні
+    data: result.value, //повертаємо сам об'єкт
+  };
 };
