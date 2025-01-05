@@ -26,3 +26,8 @@ contactsRouter.put(
   ctrlWrapper(contactsController.upsertContactContrller),
 ); // upsert(якщо є id-додати, нема-створити)
 export default contactsRouter;
+
+contactsRouter.patch(
+  '/:id',
+  ctrlWrapper(contactsController.patchContactController),
+);

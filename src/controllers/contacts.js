@@ -45,7 +45,21 @@ export const upsertContactContrller = async (req, res) => {
   const status = isNew ? 201 : 200;
   res.status(status).json({
     status,
-    message: 'successfullyy update contact',
+    message: 'successfullyy upsert contact',
     data,
+  });
+};
+
+export const patchContactController = async (req, res) => {
+  const { id } = req.params; //беремо id
+  const result = await contactsServices.updateContact(id, req.body);
+
+  if (!result) {
+    throw createHttpError(404, `Movie with id=${id} not found`);
+  }
+  res.json({
+    status: 200,
+    message: 'successfullyy upsert contact',
+    data: result.data,
   });
 };

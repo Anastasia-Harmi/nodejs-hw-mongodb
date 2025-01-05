@@ -15,7 +15,7 @@ export const updateContact = async (_id, payload, options = {}) => {
     upsert,
     includeResultMetadata: true,
   });
-
+  if (!result || !result.value) return null;
   const isNew = Boolean(result.lastErrorObject.upserted); // якщо є строка з id-true(новий об'єкт), нема - undefined(false)-оновлений об'єкт
   return {
     isNew, //повертаємо додали чи ні
