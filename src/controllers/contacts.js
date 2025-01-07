@@ -2,11 +2,11 @@ import * as contactsServices from '../services/contactsServices.js';
 import createHttpError from 'http-errors';
 
 export const getContactsContrller = async (req, res) => {
-  const data = await contactsServices.getContacts();
+  const contacts = await contactsServices.getContacts();
   res.json({
     status: 200,
-    messsage: 'Successfully found movies',
-    data,
+    messsage: 'Successfully found contacts',
+    data: contacts,
   });
 };
 
@@ -29,11 +29,11 @@ export const getContactsByIdContrller = async (req, res) => {
 };
 
 export const addContactContrller = async (req, res) => {
-  const data = contactsServices.addContact(req.body);
+  const newContact = contactsServices.addContact(req.body); // req.body -це тіло запиту
   res.status(201).json({
     status: 201,
     message: 'Successfully created a contact!',
-    data,
+    data: newContact,
   });
 };
 
@@ -55,7 +55,7 @@ export const patchContactController = async (req, res) => {
   const result = await contactsServices.updateContact(id, req.body);
 
   if (!result) {
-    throw createHttpError(404, `Movie with id=${id} not found`);
+    throw createHttpError(404, `Contact with id=${id} not found`);
   }
   res.json({
     status: 200,
@@ -66,10 +66,10 @@ export const patchContactController = async (req, res) => {
 
 export const deleteContactController = async (req, res) => {
   const { id } = req.params;
-  const data = await contactsServices.deleteContact({ _id: id });
+  const data = await contactsServices.deleteContact({ _id: id }); //або відразу req.params.id
 
   if (!data) {
-    throw createHttpError(404, `Contact with id = ${id} not found`);
+    throw createHttpError(404, `Contact with id = ${id} not found`); // оператор throw відповідає за те,щоб помилка прокинулась в catch,який у декораторі в ctrlWrapper єб throw сам перериває функцію, якби тут був next,return треба було б писати
   }
   res.status(204).send();
 };
