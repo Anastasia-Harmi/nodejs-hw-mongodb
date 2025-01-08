@@ -2,11 +2,15 @@ import ContactCollection from '../db/models/Contact.js';
 
 export const getContacts = () => {
   // throw new Error("Database error");
-  ContactCollection.find();
+  return ContactCollection.find();
 };
-export const getContactById = (id) => ContactCollection.findById(id);
+export const getContactById = (id) => {
+  return ContactCollection.findById(id);
+};
 
-export const addContact = (payload) => ContactCollection.create(payload); //додаємо в базу об'єкт і повертаємо його з id
+export const addContact = (payload) => {
+  return ContactCollection.create(payload);
+}; //додаємо в базу об'єкт і повертаємо його з id
 
 export const updateContact = async (_id, payload, options = {}) => {
   const { upsert = false } = options;
@@ -23,5 +27,6 @@ export const updateContact = async (_id, payload, options = {}) => {
   };
 };
 
-export const deleteContact = (filter) =>
-  ContactCollection.findOneAndDelete(filter);
+export const deleteContact = (filter) => {
+  return ContactCollection.findOneAndDelete(filter);
+};
