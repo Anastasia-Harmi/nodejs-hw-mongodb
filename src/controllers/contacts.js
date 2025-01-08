@@ -15,7 +15,7 @@ export const getContactsByIdContrller = async (req, res) => {
   const data = await contactsServices.getContactById(id);
 
   if (!data) {
-    throw createHttpError(404, `Movie with id ${id} not found`);
+    throw createHttpError(404, `Contact with id ${id} not found`);
     // const error = new Error(`Movie with id ${id} not found`); //створюємо помилку
     // error.status = 404; //якщо нема фільму з цим id-відправляється 404помилка на фронтенд, додаємо самі,бо в {}new Error нема поля статус
     // throw error; //помилка перейде до обгортки і там обробиться
@@ -29,7 +29,7 @@ export const getContactsByIdContrller = async (req, res) => {
 };
 
 export const addContactContrller = async (req, res) => {
-  const newContact = contactsServices.addContact(req.body); // req.body -це тіло запиту
+  const newContact = await contactsServices.addContact(req.body); // req.body -це тіло запиту
   res.status(201).json({
     status: 201,
     message: 'Successfully created a contact!',
