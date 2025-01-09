@@ -3,6 +3,8 @@
 import { Router } from 'express';
 import * as contactsController from '../controllers/contacts.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
+import { contactAddSchema } from '../constants/contactsConstans.js';
+import { validateBody } from '../validation/contacts.js';
 
 const contactsRouter = Router();
 
@@ -19,7 +21,11 @@ contactsRouter.get(
   ctrlWrapper(contactsController.getContactsByIdContrller),
 );
 
-contactsRouter.post('/', ctrlWrapper(contactsController.addContactContrller));
+contactsRouter.post(
+  '/',
+  validateBody(contactAddSchema),
+  ctrlWrapper(contactsController.addContactContrller),
+);
 
 contactsRouter.put(
   '/:id',
@@ -29,6 +35,7 @@ export default contactsRouter;
 
 contactsRouter.patch(
   '/:id',
+  validateBody(contactAddSchema),
   ctrlWrapper(contactsController.patchContactController),
 );
 

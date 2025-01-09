@@ -1,4 +1,6 @@
 import { Schema, model } from 'mongoose';
+import { contactTypeList } from '../../constants/contactsConstans.js';
+
 //створюємо схему
 const contactSchema = new Schema(
   {
@@ -17,7 +19,7 @@ const contactSchema = new Schema(
     },
     contactType: {
       type: String,
-      enum: ['work', 'home', 'personal'],
+      enum: contactTypeList, // це масив можливих типів контактів['work', 'home', 'personal']
       required: true,
       default: 'personal',
     },
