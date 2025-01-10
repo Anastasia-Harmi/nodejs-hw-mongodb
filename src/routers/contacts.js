@@ -8,6 +8,7 @@ import {
   contactUpdateSchema,
 } from '../validation/contacts.js';
 import { validateBody } from '../middlewares/validateBody.js';
+import { isValidId } from '../middlewares/isValidId.js';
 
 const contactsRouter = Router();
 
@@ -21,6 +22,7 @@ contactsRouter.get('/', ctrlWrapper(contactsController.getContactsContrller)); /
 
 contactsRouter.get(
   '/:id',
+  isValidId,
   ctrlWrapper(contactsController.getContactsByIdContrller),
 );
 
@@ -32,6 +34,7 @@ contactsRouter.post(
 
 contactsRouter.put(
   '/:id',
+  isValidId,
   validateBody(contactUpdateSchema),
   ctrlWrapper(contactsController.upsertContactContrller),
 ); // upsert(якщо є id-додати, нема-створити)
@@ -39,11 +42,13 @@ export default contactsRouter;
 
 contactsRouter.patch(
   '/:id',
+  isValidId,
   validateBody(contactUpdateSchema),
   ctrlWrapper(contactsController.patchContactController),
 );
 
 contactsRouter.delete(
   '/:id',
+  isValidId,
   ctrlWrapper(contactsController.deleteContactController),
 );
