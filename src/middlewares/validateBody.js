@@ -6,12 +6,12 @@ export const validateBody = (schema) => async (req, res, next) => {
       abortEarly: false,
     });
 
-    next();
+    next(); //якщо тіло запиту відповідатиме вимогам схеми, то next,  передасть далі роботу контроллеру
   } catch (err) {
     const error = createHttpError(400, 'Bad Request', {
       errors: err.details,
     });
 
-    next(error);
+    next(error); //помилку пересилаємо в мідлвару errorHandler,де її обробляємо
   }
 };

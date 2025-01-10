@@ -3,8 +3,11 @@
 import { Router } from 'express';
 import * as contactsController from '../controllers/contacts.js';
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
-import { contactAddSchema } from '../constants/contactsConstans.js';
-import { validateBody } from '../validation/contacts.js';
+import {
+  contactAddSchema,
+  contactUpdateSchema,
+} from '../validation/contacts.js';
+import { validateBody } from '../middlewares/validateBody.js';
 
 const contactsRouter = Router();
 
@@ -29,13 +32,14 @@ contactsRouter.post(
 
 contactsRouter.put(
   '/:id',
+  validateBody(contactUpdateSchema),
   ctrlWrapper(contactsController.upsertContactContrller),
 ); // upsert(якщо є id-додати, нема-створити)
 export default contactsRouter;
 
 contactsRouter.patch(
   '/:id',
-  validateBody(contactAddSchema),
+  validateBody(contactUpdateSchema),
   ctrlWrapper(contactsController.patchContactController),
 );
 
