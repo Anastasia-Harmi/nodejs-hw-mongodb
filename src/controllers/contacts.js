@@ -1,8 +1,11 @@
 import * as contactsServices from '../services/contactsServices.js';
 import createHttpError from 'http-errors';
+import {parsePaginationParams} from "../utils/parsPaginationParams.js";
+
 
 export const getContactsContrller = async (req, res) => {
-  const contacts = await contactsServices.getContacts();
+  const {page, perPage} = parsePaginationParams(req.query);//req.query містить дані запиту з url після ?
+  const contacts = await contactsServices.getContacts({page, perPage});
   res.json({
     status: 200,
     messsage: 'Successfully found contacts',
