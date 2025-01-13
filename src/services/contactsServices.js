@@ -4,16 +4,22 @@ import { calcPaginationData } from '../utils/calcPaginationData.js';
 export const getContacts = async ({ page = 1, perPage = 10 }) => {
   const limit = perPage;
   const skip = (page - 1) * limit; //скільки пропустити {} з початку колекції
-  const items = await ContactCollection.find().skip(skip).limit(limit);
-  const total = await ContactCollection.countDocuments(); //рахує скільки всього {}у колекції і повертає число
-  const paginationData = calcPaginationData({ total, page, perPage });
+  const contactsQuery = ContactCollection.find(); //Створюється початковий запит до колекції контактів за допомогою Mongoose
 
-  // throw new Error("Database error");
-  return {items,
-     total,
-  ...paginationData,
-};
-  // ContactCollection.find();
+  const totalItems = await ContactCollection.find()
+  .merge(contactsQuery)
+  .countDocuments(); // countDocuments повертає загальну кількість обєктів
+
+  const data = await contactsQuery
+  .skip(skip)
+  .limit(limit); // пропусти перші skip об'єкта і поверни наступні limit
+
+  const paginationData = calcPaginationData({ totalItems, page, perPage });
+
+  return {
+    data,
+    ...paginationData,
+  };
 };
 export const getContactById = (id) => {
   return ContactCollection.findById(id);
