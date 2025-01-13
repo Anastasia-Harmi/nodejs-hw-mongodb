@@ -1,8 +1,19 @@
 import ContactCollection from '../db/models/Contact.js';
+import { calcPaginationData } from '../utils/calcPaginationData.js';
 
-export const getContacts = () => {
+export const getContacts = async ({ page = 1, perPage = 10 }) => {
+  const limit = perPage;
+  const skip = (page - 1) * limit; //скільки пропустити {} з початку колекції
+  const items = await ContactCollection.find().skip(skip).limit(limit);
+  const total = await ContactCollection.countDocuments(); //рахує скільки всього {}у колекції і повертає число
+  const paginationData = calcPaginationData({ total, page, perPage });
+
   // throw new Error("Database error");
-  return ContactCollection.find();
+  return {items,
+     total,
+  ...paginationData,
+};
+  // ContactCollection.find();
 };
 export const getContactById = (id) => {
   return ContactCollection.findById(id);
