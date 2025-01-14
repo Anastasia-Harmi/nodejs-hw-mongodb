@@ -1,18 +1,21 @@
 import ContactCollection from '../db/models/Contact.js';
 import { calcPaginationData } from '../utils/calcPaginationData.js';
 
-export const getContacts = async ({ page = 1, perPage = 10 }) => {
+export const getContacts = async ({
+  page = 1,
+  perPage = 10,
+  sortBy = '_id',
+  sortOrder = 'asc',
+}) => {
   const limit = perPage;
   const skip = (page - 1) * limit; //скільки пропустити {} з початку колекції
   const contactsQuery = ContactCollection.find(); //Створюється початковий запит до колекції контактів за допомогою Mongoose
 
   const totalItems = await ContactCollection.find()
-  .merge(contactsQuery)
-  .countDocuments(); // countDocuments повертає загальну кількість обєктів
+    .merge(contactsQuery)
+    .countDocuments(); // countDocuments повертає загальну кількість обєктів
 
-  const data = await contactsQuery
-  .skip(skip)
-  .limit(limit); // пропусти перші skip об'єкта і поверни наступні limit
+  const data = await contactsQuery.skip(skip).limit(limit); // пропусти перші skip об'єкта і поверни наступні limit
 
   const paginationData = calcPaginationData({ totalItems, page, perPage });
 

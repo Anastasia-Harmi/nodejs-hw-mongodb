@@ -30,6 +30,15 @@ const contactSchema = new Schema(
     timestamps: true, // автоматичне додавання createdAt та updatedAt
   },
 );
+//записуємо можливі поля для сортування, які берем з монгус схеми і імпортуємо у контроллер
+export const sortByList = [
+  '_id',
+  'name',
+  'phoneNumber',
+  'email',
+  'isFavourite',
+  'contactType',
+];
 
 //Створюємо модель(це клас, тому з великої)
 const ContactCollection = model('contact', contactSchema); //аргументи: (назва колекції, схема)
