@@ -4,7 +4,7 @@ import { calcPaginationData } from '../utils/calcPaginationData.js';
 export const getContacts = async ({
   page = 1,
   perPage = 10,
-  sortBy = '_id',
+  sortBy = 'name',
   sortOrder = 'asc',
 }) => {
   const limit = perPage;
@@ -15,7 +15,10 @@ export const getContacts = async ({
     .merge(contactsQuery)
     .countDocuments(); // countDocuments повертає загальну кількість обєктів
 
-  const data = await contactsQuery.skip(skip).limit(limit); // пропусти перші skip об'єкта і поверни наступні limit
+  const data = await contactsQuery
+    .skip(skip)
+    .limit(limit)
+    .sort({ [sortBy]: sortOrder }); // пропусти перші skip об'єкта і поверни наступні limit, відсортує за полем sortBy і значенням sortOrder
 
   const paginationData = calcPaginationData({ totalItems, page, perPage });
 

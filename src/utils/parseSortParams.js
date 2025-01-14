@@ -1,4 +1,4 @@
-import { sortByList } from '../db/models/Contact';
+import { sortByList } from '../db/models/Contact.js';
 
 const sortOrderList = ['asc', 'desc']; //створюємо масив з можливими порядками сортування
 
@@ -9,7 +9,7 @@ export const parseSortParams = ({ sortBy, sortOrder }) => {
     : sortOrderList[0]; //якщо порядок сортування який пердали є в списку, то ми цей порядок сортування лишаємо, якщо нема-то за замовчуванням передаємо 1 варіант сортування
 
   //отримуємо поле:
-  const parsedSortBy = sortByList.includes(sortBy) ? sortBy : '_id';
+  const parsedSortBy = sortByList.includes(sortBy) ? sortBy : 'name';
 
   return {
     sortBy: parsedSortBy,
