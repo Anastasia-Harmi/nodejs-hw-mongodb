@@ -3,15 +3,18 @@ import createHttpError from 'http-errors';
 import { parsePaginationParams } from '../utils/parsPaginationParams.js';
 import { sortByList } from '../db/models/Contact.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
+import { parseContactFilterParams } from '../utils/filters/parseContactFilterParams.js';
 
 export const getContactsContrller = async (req, res) => {
   const { page, perPage } = parsePaginationParams(req.query); //req.query містить дані запиту з url після ?
   const { sortBy, sortOrder } = parseSortParams(req.query, sortByList);
+  const filters = parseContactFilterParams(req.query);
   const contacts = await contactsServices.getContacts({
     page,
     perPage,
     sortBy,
     sortOrder,
+    filters,
   });
   res.json({
     status: 200,

@@ -6,13 +6,23 @@ export const getContacts = async ({
   perPage = 10,
   sortBy = 'name',
   sortOrder = 'asc',
+  filters = {},
 }) => {
   const limit = perPage;
   const skip = (page - 1) * limit; //скільки пропустити {} з початку колекції
   const contactsQuery = ContactCollection.find(); //Створюється початковий запит до колекції контактів за допомогою Mongoose
 
+  if (filters.type) {
+    //Якщо умова в попередньому рядку була істинною (тобто значення для filter.type існує), цей рядок виконує фільтрацію в запиті contactsQuery
+    contactsQuery.where('contactType').equals(filters.type); //Викликається метод where на об'єкті contactsQuery,метод equals, щоб порівняти значення в полі contactType з переданим значенням filter.type. Якщо значення в полі contactType дорівнює значенню в filter.type, то результат запиту буде включати ці контакти.
+  }
+
+  if (filters.isFavourite) {
+    contactsQuery.where('isFavourite').equals(filters.isFavourite);
+  }
+
   const totalItems = await ContactCollection.find()
-    .merge(contactsQuery)
+    .merge(contactsQuery) //.merge() не змінює сам contactsQuery, а додає умови (фільтри, сортування тощо) з цього запиту до основного запиту ContactCollection.find().
     .countDocuments(); // countDocuments повертає загальну кількість обєктів
 
   const data = await contactsQuery
