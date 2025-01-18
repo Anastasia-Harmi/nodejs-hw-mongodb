@@ -39,7 +39,7 @@ export const loginUser = async (userData) => {
     userId: user._id,
     accessToken,
     refreshToken,
-    accessTokenValidUntil: new Date(Date.now() + FIFTEEN_MINUTES),
-    refreshTokenValidUntil: new Date(Date.now() + THIRTY_DAYS),
+    accessTokenValidUntil: new Date(Date.now() + FIFTEEN_MINUTES), //час життя токену
+    refreshTokenValidUntil: new Date(Date.now() + THIRTY_DAYS), //час життя токену
   });
 };

@@ -8,6 +8,7 @@ import { getEnvVar } from './utils/getEnvVar.js';
 // dotenv.config(); //читає текстовий файл з env і записує в налаштування комп.
 import contactsRouter from './routers/contacts.js';
 import authRouter from './routers/auth.js';
+import cookieParser from 'cookie-parser';
 
 export const setupServer = () => {
   const app = express();
@@ -16,6 +17,7 @@ export const setupServer = () => {
   app.use(cors());
   app.use(express.json());
   app.use(logger);
+  app.use(cookieParser());
 
   app.use('/auth', authRouter); //запит, що почин з /auth шукаємо його обробку в об'єкті authRouter в routers;
 
