@@ -21,3 +21,8 @@ authRouter.post(
   validateBody(loginUserSchema),
   ctrlWrapper(authController.loginUserController),
 );
+
+authRouter.post(
+  '/refresh',
+  ctrlWrapper(authController.refreshUsersSessionController),
+);
