@@ -9,6 +9,8 @@ export const getContactsContrller = async (req, res) => {
   const { page, perPage } = parsePaginationParams(req.query); //req.query містить дані запиту з url після ?
   const { sortBy, sortOrder } = parseSortParams(req.query, sortByList);
   const filters = parseContactFilterParams(req.query);
+  filters.userId = req.user._id; //повертаємо лише фільми залогіненого юзера
+
   const contacts = await contactsServices.getContacts({
     page,
     perPage,
@@ -24,11 +26,12 @@ export const getContactsContrller = async (req, res) => {
 };
 
 export const getContactsByIdContrller = async (req, res) => {
-  const { id } = req.params;
-  const data = await contactsServices.getContactById(id);
+  const { _id: userId } = req.user;
+  const { contactId: _id } = req.params;
+  const data = await contactsServices.getContactById(_id, userId);
 
   if (!data) {
-    throw createHttpError(404, `Contact with id ${id} not found`);
+    throw createHttpError(404, `Contact with id ${_id} not found`);
     // const error = new Error(`Movie with id ${id} not found`); //створюємо помилку
     // error.status = 404; //якщо нема фільму з цим id-відправляється 404помилка на фронтенд, додаємо самі,бо в {}new Error нема поля статус
     // throw error; //помилка перейде до обгортки і там обробиться
@@ -36,13 +39,14 @@ export const getContactsByIdContrller = async (req, res) => {
 
   res.json({
     status: 200,
-    message: `Successfully find movie with id=${id}`,
+    message: `Successfully find movie with id=${_id}`,
     data,
   }); //обробка вдалого запиту в цій функції відбудеться
 };
 
 export const addContactContrller = async (req, res) => {
-  const newContact = await contactsServices.addContact(req.body); // req.body -це тіло запиту
+  const { _id: userId } = req.user;
+  const newContact = await contactsServices.addContact(...req.body, userId); // req.body -це тіло запиту
   res.status(201).json({
     status: 201,
     message: 'Successfully created a contact!',
@@ -52,9 +56,14 @@ export const addContactContrller = async (req, res) => {
 
 export const upsertContactContrller = async (req, res) => {
   const { id } = req.params; //беремо id
-  const { isNew, data } = await contactsServices.updateContact(id, req.body, {
-    upsert: true,
-  });
+  const { _id: userId } = req.user;
+  const { isNew, data } = await contactsServices.updateContact(
+    id,
+    { ...req.body, userId },
+    {
+      upsert: true,
+    },
+  );
   const status = isNew ? 201 : 200;
   res.status(status).json({
     status,
@@ -64,11 +73,15 @@ export const upsertContactContrller = async (req, res) => {
 };
 
 export const patchContactController = async (req, res) => {
-  const { id } = req.params; //беремо id
-  const result = await contactsServices.updateContact(id, req.body);
+  const { id: _id } = req.params; //беремо id
+  const { _id: userId } = req.user;
+  const result = await contactsServices.updateContact(
+    { _id, userId },
+    req.body,
+  );
 
   if (!result) {
-    throw createHttpError(404, `Contact with id=${id} not found`);
+    throw createHttpError(404, `Contact with id=${_id} not found`);
   }
   res.json({
     status: 200,
@@ -78,11 +91,12 @@ export const patchContactController = async (req, res) => {
 };
 
 export const deleteContactController = async (req, res) => {
-  const { id } = req.params;
-  const data = await contactsServices.deleteContact({ _id: id }); //або відразу req.params.id
+  const { id: _id } = req.params;
+  const { _id: userId } = req.user;
+  const data = await contactsServices.deleteContact({ _id, userId }); //або відразу req.params.id
 
   if (!data) {
-    throw createHttpError(404, `Contact with id = ${id} not found`); // оператор throw відповідає за те,щоб помилка прокинулась в catch,який у декораторі в ctrlWrapper єб throw сам перериває функцію, якби тут був next,return треба було б писати
+    throw createHttpError(404, `Contact with id = ${_id} not found`); // оператор throw відповідає за те,щоб помилка прокинулась в catch,який у декораторі в ctrlWrapper єб throw сам перериває функцію, якби тут був next,return треба було б писати
   }
   res.status(204).send();
 };

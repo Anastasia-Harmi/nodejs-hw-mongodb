@@ -20,6 +20,9 @@ export const getContacts = async ({
   if (filters.isFavourite) {
     contactsQuery.where('isFavourite').equals(filters.isFavourite);
   }
+  if (filters.userId) {
+    contactsQuery.where('userId').equals(filters.userId);
+  }
 
   const totalItems = await ContactCollection.find()
     .merge(contactsQuery) //.merge() не змінює сам contactsQuery, а додає умови (фільтри, сортування тощо) з цього запиту до основного запиту ContactCollection.find().
@@ -45,9 +48,9 @@ export const addContact = (payload) => {
   return ContactCollection.create(payload);
 }; //додаємо в базу об'єкт і повертаємо його з id
 
-export const updateContact = async (_id, payload, options = {}) => {
+export const updateContact = async (filter, payload, options = {}) => {
   const { upsert = false } = options;
-  const result = await ContactCollection.findOneAndUpdate({ _id }, payload, {
+  const result = await ContactCollection.findOneAndUpdate(filter, payload, {
     new: true,
     upsert,
     includeResultMetadata: true,
