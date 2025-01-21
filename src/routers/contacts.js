@@ -9,8 +9,10 @@ import {
 } from '../validation/contacts.js';
 import { validateBody } from '../middlewares/validateBody.js';
 import { isValidId } from '../middlewares/isValidId.js';
+import { authenticate } from '../middlewares/autheticate.js';
 
 const contactsRouter = Router();
+contactsRouter.use(authenticate); //спершу запит пройде через перевірку authenticate,а вже потім в маршрути
 
 // contactsRouter.get('/', (req, res) => {
 //   res.json({
