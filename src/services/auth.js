@@ -4,6 +4,10 @@ import bcrypt from 'bcrypt';
 import { SessionsCollection } from '../db/models/Session.js';
 import { randomBytes } from 'crypto'; //для створ токенів ф-ія
 import { FIFTEEN_MINUTES, THIRTY_DAYS } from '../constants/usersConstants.js';
+import jwt from 'jsonwebtoken';
+import { SMTP } from '../constants/usersConstants.js';
+import { getEnvVar } from '../utils/getEnvVar.js';
+import { sendEmail } from '../utils/sendMail.js';
 
 export const registerUser = async (userData) => {
   const user = await UsersCollection.findOne({ email: userData.email });
@@ -102,4 +106,21 @@ export const requestResetToken = async (email) => {
   if (!user) {
     throw createHttpError(404, 'User not found');
   }
+  const resetToken = jwt.sign(
+    {
+      sub: user._id, //Ідентифікатор користувача
+      email, //Електронна пошта користувача
+    },
+    getEnvVar('JWT_SECRET'), // Секретний ключ для підпису токену
+    {
+      expiresIn: '15m', // Термін дії токену — 15 хвилин
+    },
+  );
+
+  await sendEmail({
+    from: getEnvVar(SMTP.SMTP_FROM), // Адреса відправника
+    to: email, // Адреса отримувача
+    subject: 'Reset your password', // Тема листа
+    html: `<p>Click <a href="${resetToken}">here</a> to reset your password!</p>`, // Текст листа з посиланням
+  });
 };
