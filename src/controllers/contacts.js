@@ -46,7 +46,7 @@ export const getContactsByIdContrller = async (req, res) => {
 
 export const addContactContrller = async (req, res) => {
   const { _id: userId } = req.user;
-  const newContact = await contactsServices.addContact(...req.body, userId); // req.body -це тіло запиту
+  const newContact = await contactsServices.addContact({ ...req.body, userId }); // req.body -це тіло запиту
   res.status(201).json({
     status: 201,
     message: 'Successfully created a contact!',
