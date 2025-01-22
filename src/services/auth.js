@@ -94,3 +94,12 @@ export const logoutUserController = async (req, res) => {
 
   res.status(204).send();
 };
+
+//скид паролю
+export const requestResetToken = async (email) => {
+  const user = await UsersCollection.findOne({ email });
+
+  if (!user) {
+    throw createHttpError(404, 'User not found');
+  }
+};

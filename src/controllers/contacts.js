@@ -28,7 +28,7 @@ export const getContactsContrller = async (req, res) => {
 export const getContactsByIdContrller = async (req, res) => {
   const { _id: userId } = req.user;
   const { contactId: _id } = req.params;
-  const data = await contactsServices.getContactById(_id, userId);
+  const data = await contactsServices.getContactById({ _id, userId });
 
   if (!data) {
     throw createHttpError(404, `Contact with id ${_id} not found`);
@@ -46,7 +46,7 @@ export const getContactsByIdContrller = async (req, res) => {
 
 export const addContactContrller = async (req, res) => {
   const { _id: userId } = req.user;
-  const newContact = await contactsServices.addContact(...req.body, userId); // req.body -це тіло запиту
+  const newContact = await contactsServices.addContact({ ...req.body, userId }); // req.body -це тіло запиту
   res.status(201).json({
     status: 201,
     message: 'Successfully created a contact!',
