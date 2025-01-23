@@ -9,6 +9,7 @@ import { getEnvVar } from './utils/getEnvVar.js';
 import contactsRouter from './routers/contacts.js';
 import authRouter from './routers/auth.js';
 import cookieParser from 'cookie-parser';
+import { UPLOAD_DIR } from './constants/usersConstants.js';
 
 export const setupServer = () => {
   const app = express();
@@ -19,6 +20,7 @@ export const setupServer = () => {
   app.use(logger);
   app.use(cookieParser());
 
+  app.use('/uploads', express.static(UPLOAD_DIR));
   app.use('/auth', authRouter); //запит, що почин з /auth шукаємо його обробку в об'єкті authRouter в routers;
 
   app.use('/contacts', contactsRouter); //якщо прийде любий запит, що починається з /contacts,то обробку його шукай у об'єкті contactsRouter
