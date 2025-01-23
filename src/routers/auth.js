@@ -8,6 +8,7 @@ import {
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import * as authController from '../controllers/auth.js';
 import { logoutUserController } from '../services/auth.js';
+import { resetPasswordSchema } from '../validation/auth.js';
 
 const authRouter = Router();
 
@@ -35,4 +36,10 @@ authRouter.post(
   '/send-reset-email',
   validateBody(requestResetEmailSchema),
   ctrlWrapper(authController.requestResetEmailController),
+);
+
+authRouter.post(
+  '/reset-password',
+  validateBody(resetPasswordSchema),
+  ctrlWrapper(authController.resetPasswordController),
 );
