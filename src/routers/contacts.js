@@ -10,6 +10,7 @@ import {
 import { validateBody } from '../middlewares/validateBody.js';
 import { isValidId } from '../middlewares/isValidId.js';
 import { authenticate } from '../middlewares/autheticate.js';
+import { upload } from '../middlewares/multer.js';
 
 const contactsRouter = Router();
 contactsRouter.use(authenticate); //спершу запит пройде через перевірку authenticate,а вже потім в маршрути
@@ -30,6 +31,7 @@ contactsRouter.get(
 
 contactsRouter.post(
   '/',
+  upload.single('photo'),
   validateBody(contactAddSchema),
   ctrlWrapper(contactsController.addContactContrller),
 );
@@ -37,6 +39,7 @@ contactsRouter.post(
 contactsRouter.put(
   '/:id',
   isValidId,
+  upload.single('photo'),
   validateBody(contactUpdateSchema),
   ctrlWrapper(contactsController.upsertContactContrller),
 ); // upsert(якщо є id-додати, нема-створити)
@@ -45,6 +48,7 @@ export default contactsRouter;
 contactsRouter.patch(
   '/:id',
   isValidId,
+  upload.single('photo'),
   validateBody(contactUpdateSchema),
   ctrlWrapper(contactsController.patchContactController),
 );
