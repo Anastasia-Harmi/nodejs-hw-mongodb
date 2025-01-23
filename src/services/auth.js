@@ -7,7 +7,8 @@ import { FIFTEEN_MINUTES, THIRTY_DAYS } from '../constants/usersConstants.js';
 import jwt from 'jsonwebtoken';
 import { SMTP } from '../constants/usersConstants.js';
 import { getEnvVar } from '../utils/getEnvVar.js';
-import { sendEmail, TEMPLATES_DIR } from '../utils/sendMail.js';
+import { sendEmail } from '../utils/sendMail.js';
+import { TEMPLATES_DIR } from '../constants/usersConstants.js';
 import handlebars from 'handlebars';
 import path from 'node:path';
 import fs from 'node:fs/promises';
@@ -134,11 +135,19 @@ export const requestResetToken = async (email) => {
     name: user.name,
     link: `${getEnvVar('APP_DOMAIN')}/reset-password?token=${resetToken}`,
   });
-
-  await sendEmail({
-    from: getEnvVar(SMTP.SMTP_FROM), // Адреса відправника
-    to: email, // Адреса отримувача
-    subject: 'Reset your password', //Тема листа
-    html, //Текст листа з посиланням
-  });
+  try {
+    await sendEmail({
+      from: getEnvVar(SMTP.SMTP_FROM), // Адреса відправника
+      to: email, // Адреса отримувача
+      subject: 'Reset your password', //Тема листа
+      html, //Текст листа з посиланням
+    });
+  } catch (error) {
+    if (error instanceof Error) {
+      throw createHttpError(
+        500,
+        'Failed to send the email, please try again later.',
+      );
+    }
+  }
 };
