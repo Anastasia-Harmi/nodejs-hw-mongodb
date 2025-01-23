@@ -4,6 +4,7 @@ import { parsePaginationParams } from '../utils/parsPaginationParams.js';
 import { sortByList } from '../db/models/Contact.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
 import { parseContactFilterParams } from '../utils/filters/parseContactFilterParams.js';
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
 
 export const getContactsContrller = async (req, res) => {
   const { page, perPage } = parsePaginationParams(req.query); //req.query містить дані запиту з url після ?
@@ -76,9 +77,17 @@ export const upsertContactContrller = async (req, res) => {
 export const patchContactController = async (req, res) => {
   const { id: _id } = req.params; //беремо id
   const { _id: userId } = req.user;
+
+  const photo = req.file;
+  let photoUrl;
+
+  if (photo) {
+    photoUrl = await saveFileToCloudinary(photo);
+  }
+
   const result = await contactsServices.updateContact(
     { _id, userId },
-    req.body,
+    { ...req.body, photo: photoUrl },
   );
 
   if (!result) {
