@@ -27,7 +27,7 @@ export const getContactsContrller = async (req, res) => {
 
 export const getContactsByIdContrller = async (req, res) => {
   const { _id: userId } = req.user;
-  const { contactId: _id } = req.params;
+  const { id: _id } = req.params;
   const data = await contactsServices.getContactById({ _id, userId });
 
   if (!data) {
