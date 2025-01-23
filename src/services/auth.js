@@ -7,7 +7,10 @@ import { FIFTEEN_MINUTES, THIRTY_DAYS } from '../constants/usersConstants.js';
 import jwt from 'jsonwebtoken';
 import { SMTP } from '../constants/usersConstants.js';
 import { getEnvVar } from '../utils/getEnvVar.js';
-import { sendEmail } from '../utils/sendMail.js';
+import { sendEmail, TEMPLATES_DIR } from '../utils/sendMail.js';
+import handlebars from 'handlebars';
+import path from 'node:path';
+import fs from 'node:fs/promises';
 
 export const registerUser = async (userData) => {
   const user = await UsersCollection.findOne({ email: userData.email });
@@ -117,10 +120,25 @@ export const requestResetToken = async (email) => {
     },
   );
 
+  const resetPasswordTemplatePath = path.join(
+    TEMPLATES_DIR,
+    'reset-password-email.html',
+  );
+
+  const templateSource = (
+    await fs.readFile(resetPasswordTemplatePath)
+  ).toString();
+
+  const template = handlebars.compile(templateSource);
+  const html = template({
+    name: user.name,
+    link: `${getEnvVar('APP_DOMAIN')}/reset-password?token=${resetToken}`,
+  });
+
   await sendEmail({
     from: getEnvVar(SMTP.SMTP_FROM), // Адреса відправника
     to: email, // Адреса отримувача
-    subject: 'Reset your password', // Тема листа
-    html: `<p>Click <a href="${resetToken}">here</a> to reset your password!</p>`, // Текст листа з посиланням
+    subject: 'Reset your password', //Тема листа
+    html, //Текст листа з посиланням
   });
 };
