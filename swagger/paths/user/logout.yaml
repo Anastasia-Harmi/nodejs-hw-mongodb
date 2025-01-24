@@ -1,0 +1,12 @@
+#/swagger/paths/user/logout.yaml
+
+tags:
+  - User
+summary: Logout user
+operationId: logoutUser
+description: 'Logout a user with payload'
+security:
+  - bearerAuth: []
+responses:
+  '401':
+    $ref: '../../components/responses/401.yaml'

@@ -5,14 +5,41 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  description: This is documentation of my contacts app
+  description: This is a documentation of my contacts app
 tags:
-  # теги, що ви будете використовувати
+  - name: Contacts
+    description: Operations about contacts.
 servers:
   - url: http://localhost:3000
-  - url: #посилання на задеплоєний сайт
+  - url: https://contacts-mb5h.onrender.com
 paths:
-  # тут будуть посилання на ендпоінти
+  /contacts:
+    get:
+      $ref: ../swagger/paths/contacts/get.yaml
+    post:
+      $ref: ../swagger/paths/contacts/post.yaml
+  /contacts/{id}:
+    get:
+      $ref: ../swagger/paths/contacts/{id}/get.yaml
+    patch:
+      $ref: ../swagger/paths/contacts/{id}/patch.yaml
+    delete:
+      $ref: ../swagger/paths/contacts/{id}/delete.yaml
+  /auth/register:
+    post:
+      $ref: ../swagger/paths/user/register.yaml
+  /auth/login:
+    post:
+      $ref: ../swagger/paths/user/login.yaml
+  /auth/logout:
+    post:
+      $ref: ../swagger/paths/user/logout.yaml
+  /auth/send-reset-email:
+    post:
+      $ref: ../swagger/paths/user/sendResetEmail.yaml
+  /auth/reset-pwd:
+    post:
+      $ref: ../swagger/paths/user/resetPwd.yaml
 components:
   securitySchemes:
     bearerAuth:
