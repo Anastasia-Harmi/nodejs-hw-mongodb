@@ -5,6 +5,8 @@ import { sortByList } from '../db/models/Contact.js';
 import { parseSortParams } from '../utils/parseSortParams.js';
 import { parseContactFilterParams } from '../utils/filters/parseContactFilterParams.js';
 import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
+import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
+import { getEnvVar } from '../utils/getEnvVar.js';
 
 export const getContactsContrller = async (req, res) => {
   const { page, perPage } = parsePaginationParams(req.query); //req.query містить дані запиту з url після ?
@@ -48,7 +50,22 @@ export const getContactsByIdContrller = async (req, res) => {
 
 export const addContactContrller = async (req, res) => {
   const { _id: userId } = req.user;
-  const newContact = await contactsServices.addContact({ ...req.body, userId }); // req.body -це тіло запиту
+  const photo = req.file;
+  let photoUrl;
+
+  if (photo) {
+    if (getEnvVar('ENABLE_CLOUDINARY') === 'true') {
+      photoUrl = await saveFileToCloudinary(photo);
+    } else {
+      photoUrl = await saveFileToUploadDir(photo);
+    }
+  }
+
+  const newContact = await contactsServices.addContact({
+    ...req.body,
+    userId,
+    photo: photoUrl,
+  }); // req.body -це тіло запиту
   res.status(201).json({
     status: 201,
     message: 'Successfully created a contact!',
@@ -82,7 +99,11 @@ export const patchContactController = async (req, res) => {
   let photoUrl;
 
   if (photo) {
-    photoUrl = await saveFileToCloudinary(photo);
+    if (getEnvVar('ENABLE_CLOUDINARY') === 'true') {
+      photoUrl = await saveFileToCloudinary(photo);
+    } else {
+      photoUrl = await saveFileToUploadDir(photo);
+    }
   }
 
   const result = await contactsServices.updateContact(
